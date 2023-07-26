@@ -8,17 +8,13 @@ import LIB.Car;
 import LIB.DatabaseConnection;
 import LIB.Facade;
 import LIB.IFacade;
-import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.HeadlessException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -421,17 +417,20 @@ public class ManageCars extends javax.swing.JFrame {
         if(selectedCarID==0){
             JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
         } else {
+            int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
+            if(input==0){
+                String query = "DELETE FROM CARS WHERE carID =" + selectedCarID +";";
+                try{
+                    DatabaseConnection connect = DatabaseConnection.getInstance();
+                    Connection conn = connect.getConnection();
+                    Statement stmt = conn.createStatement();
+                    stmt.executeUpdate(query);
+                    conn.close();
+                    update();
+                } catch (SQLException e){
+                    JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
+                }
             
-            String query = "DELETE FROM CARS WHERE carID =" + selectedCarID +";";
-            try{
-                DatabaseConnection connect = DatabaseConnection.getInstance();
-                Connection conn = connect.getConnection();
-                Statement stmt = conn.createStatement();
-                stmt.executeUpdate(query);
-                conn.close();
-                update();
-            } catch (SQLException e){
-                JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
             }
         }
     }//GEN-LAST:event_jButton3ActionPerformed

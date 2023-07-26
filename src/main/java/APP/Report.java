@@ -11,8 +11,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,6 +22,7 @@ public class Report extends javax.swing.JFrame {
     /**
      * Creates new form Report
      */
+    DatabaseConnection connect;
     public Report() {
         initComponents();
         update("SELECT * FROM CARS;");
@@ -32,19 +31,11 @@ public class Report extends javax.swing.JFrame {
         fetchType();
     }
     
-    public Connection connect(){
-        Connection conn = null;
-        try{
-            conn = DriverManager.getConnection("jdbc:sqlite:CarManagementRental.db");
-        } catch (SQLException e){
-            System.out.println("Database Connection Unsuccessful" + e.getMessage());
-        }
-        return conn;
-    }
-    
     public void fetchMake(){
-        Connection conn = connect();
+        
         try{
+            connect = DatabaseConnection.getInstance();
+            Connection conn = connect.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT Distinct(make) FROM cars; ");
             while(rs.next()){
@@ -57,8 +48,9 @@ public class Report extends javax.swing.JFrame {
     }
     
     public void fetchModel(){
-        Connection conn = connect();
         try{
+            connect = DatabaseConnection.getInstance();
+            Connection conn = connect.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT Distinct(model) FROM cars; ");
             while(rs.next()){

@@ -4,7 +4,6 @@
  */
 package LIB;
 
-import java.sql.Connection;
 
 /**
  *
