@@ -1,4 +1,4 @@
 # Car-Rental-Management-System
-Final Object Oriented Project
+Car Rental and Management System using JAVA (MAVEN) and SQLite
 
-If database access fails, install sqlite driver dependency
+
