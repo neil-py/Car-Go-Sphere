@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author neil
  */
-public class Car implements IDBConnect{
+public class Car implements Backend{
     private String make;
     private String model;
     private String type;

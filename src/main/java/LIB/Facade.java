@@ -9,11 +9,11 @@ package LIB;
  * @author neil
  */
 public class Facade implements IFacade{
-    private IDBConnect car;
-    private IDBConnect customer;
-    private IDBConnect bookrental;
+    private Backend car;
+    private Backend customer;
+    private Backend bookrental;
     
-    public Facade(IDBConnect x){
+    public Facade(Backend x){
         if (x instanceof Car){
             this.car=x;
         } else if(x instanceof Customer){

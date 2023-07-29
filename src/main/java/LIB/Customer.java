@@ -12,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author neil
  */
-public class Customer implements IDBConnect{
+public class Customer implements Backend{
     
     
     private String fname;

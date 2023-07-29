@@ -10,7 +10,7 @@ import java.sql.Connection;
  *
  * @author neil
  */
-public class BookRental implements IDBConnect{
+public class BookRental implements Backend{
 
 
     @Override

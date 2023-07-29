@@ -9,6 +9,6 @@ package LIB;
  *
  * @author neil
  */
-public interface IDBConnect {
+public interface Backend {
     void register();
 }
