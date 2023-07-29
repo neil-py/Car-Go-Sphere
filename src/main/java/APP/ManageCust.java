@@ -35,6 +35,7 @@ public class ManageCust extends javax.swing.JFrame {
         update();
     }
     
+    //general update function
     public void update(){
         selectedCustID =0;
         Connection conn;
@@ -42,13 +43,13 @@ public class ManageCust extends javax.swing.JFrame {
         tableModel.getDataVector().removeAllElements();
         
         //remove information from inputs
-        
         fnameIN.setText("");
         lnameIN.setText("");
         addressIN.setText("");
         contactNoIN.setText("");
         licenseNoIN.setText("");
         
+        //updates the table view
         try{
             conn = DriverManager.getConnection("jdbc:sqlite:CarManagementRental.db");
             Statement stmt = conn.createStatement();
@@ -66,6 +67,85 @@ public class ManageCust extends javax.swing.JFrame {
             conn.close();
         } catch (Exception e){
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+    // register new customer
+    public void register(){
+        if(selectedCustID!=0){
+            JOptionPane.showMessageDialog(this, "ERROR: Customer already Exists In The Database!");
+        } else{
+            try{
+                String fname = fnameIN.getText();
+                String lname = lnameIN.getText();
+                String address = addressIN.getText();
+                String contactNo = contactNoIN.getText();
+                String licenseNo = licenseNoIN.getText();
+                
+                if("".equals(fname)||"".equals(lname)||"".equals(address)||"".equals(contactNo)||"".equals(licenseNo)){
+                    JOptionPane.showMessageDialog(this, "ERROR: Insufficient Information!");
+                } else{
+                    //facade pattern implementation
+                    IFacade create = new Facade(new Customer(fname,lname,address,contactNo,licenseNo));
+                    create.registerCustomer();
+                    update();
+                }
+
+            } catch (HeadlessException | NumberFormatException e){
+                JOptionPane.showMessageDialog(this, "ERROR: Please Check Your Entries and Try Again!");
+            }
+        }
+    } 
+    // deleted selected customer
+    public void delete(){
+        if(selectedCustID==0){
+            JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
+        } else {
+            int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
+            if(input!=0){
+                String query = "DELETE FROM CUSTOMERS WHERE custID =" + selectedCustID +";";
+                try{
+                    DatabaseConnection connect = DatabaseConnection.getInstance();
+                    Connection conn = connect.getConnection();
+                    Statement stmt = conn.createStatement();
+                    stmt.executeUpdate(query);
+                    conn.close();
+                    update();
+                } catch (SQLException e){
+                    JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
+                }
+            }
+            
+        }
+    }
+    //update information of the selected customer
+    public void updateCust(){
+        if(selectedCustID ==0){
+            JOptionPane.showMessageDialog(this, "ERROR: No Selected Row!");
+        } else {
+            
+            String query = "UPDATE CUSTOMERS SET fname=?, lname=?, address=?, contactNo=?, licenseNo=?  WHERE custID=?;";
+            String fname = fnameIN.getText();
+            String lname = lnameIN.getText();
+            String address = addressIN.getText();
+            String contactNo = contactNoIN.getText();
+            String licenseNo = licenseNoIN.getText();
+            try{
+                DatabaseConnection connect = DatabaseConnection.getInstance();
+                Connection conn = connect.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                
+                pstmt.setString(1, fname);
+                pstmt.setString(2, lname);
+                pstmt.setString(3, address);
+                pstmt.setString(4, contactNo);
+                pstmt.setString(5, licenseNo);
+                pstmt.setInt(6, selectedCustID);
+                 pstmt.executeUpdate();
+                conn.close();
+                update();
+            } catch (SQLException e){
+                System.out.println("ERROR: " + e.getMessage());
+            }
         }
     }
 
@@ -215,8 +295,11 @@ public class ManageCust extends javax.swing.JFrame {
         jScrollPane1.setViewportView(custTable);
         if (custTable.getColumnModel().getColumnCount() > 0) {
             custTable.getColumnModel().getColumn(0).setResizable(false);
+            custTable.getColumnModel().getColumn(0).setPreferredWidth(10);
             custTable.getColumnModel().getColumn(1).setResizable(false);
+            custTable.getColumnModel().getColumn(1).setPreferredWidth(13);
             custTable.getColumnModel().getColumn(2).setResizable(false);
+            custTable.getColumnModel().getColumn(2).setPreferredWidth(13);
             custTable.getColumnModel().getColumn(3).setResizable(false);
             custTable.getColumnModel().getColumn(4).setResizable(false);
             custTable.getColumnModel().getColumn(5).setResizable(false);
@@ -308,9 +391,7 @@ public class ManageCust extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -326,85 +407,17 @@ public class ManageCust extends javax.swing.JFrame {
 
     private void RegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegisterActionPerformed
         // TODO add your handling code here:
-       if(selectedCustID!=0){
-            JOptionPane.showMessageDialog(this, "ERROR: Customer already Exists In The Database!");
-        } else{
-            try{
-                String fname = fnameIN.getText();
-                String lname = lnameIN.getText();
-                String address = addressIN.getText();
-                String contactNo = contactNoIN.getText();
-                String licenseNo = licenseNoIN.getText();
-                
-                if("".equals(fname)||"".equals(lname)||"".equals(address)||"".equals(contactNo)||"".equals(licenseNo)){
-                    JOptionPane.showMessageDialog(this, "ERROR: Insufficient Information!");
-                } else{
-                    //facade pattern implementation
-                    IFacade create = new Facade(new Customer(fname,lname,address,contactNo,licenseNo));
-                    create.registerCustomer();
-                    update();
-                }
-
-            } catch (HeadlessException | NumberFormatException e){
-                JOptionPane.showMessageDialog(this, "ERROR: Please Check Your Entries and Try Again!");
-            }
-        }
+       register();
     }//GEN-LAST:event_RegisterActionPerformed
 
     private void Register2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Register2ActionPerformed
         // TODO add your handling code here:
-        if(selectedCustID ==0){
-            JOptionPane.showMessageDialog(this, "ERROR: No Selected Row!");
-        } else {
-            
-            String query = "UPDATE CUSTOMERS SET fname=?, lname=?, address=?, contactNo=?, licenseNo=?  WHERE custID=?;";
-            String fname = fnameIN.getText();
-            String lname = lnameIN.getText();
-            String address = addressIN.getText();
-            String contactNo = contactNoIN.getText();
-            String licenseNo = licenseNoIN.getText();
-            try{
-                DatabaseConnection connect = DatabaseConnection.getInstance();
-                Connection conn = connect.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                
-                pstmt.setString(1, fname);
-                pstmt.setString(2, lname);
-                pstmt.setString(3, address);
-                pstmt.setString(4, contactNo);
-                pstmt.setString(5, licenseNo);
-                pstmt.setInt(6, selectedCustID);
-                 pstmt.executeUpdate();
-                conn.close();
-                update();
-            } catch (SQLException e){
-                System.out.println("ERROR: " + e.getMessage());
-            }
-        }
+        updateCust();
     }//GEN-LAST:event_Register2ActionPerformed
 
     private void Register3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Register3ActionPerformed
         // TODO add your handling code here:
-         if(selectedCustID==0){
-            JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
-        } else {
-            int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
-            if(input!=0){
-                String query = "DELETE FROM CUSTOMERS WHERE custID =" + selectedCustID +";";
-                try{
-                    DatabaseConnection connect = DatabaseConnection.getInstance();
-                    Connection conn = connect.getConnection();
-                    Statement stmt = conn.createStatement();
-                    stmt.executeUpdate(query);
-                    conn.close();
-                    update();
-                } catch (SQLException e){
-                    JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
-                }
-            }
-            
-        }
-        
+        delete();
     }//GEN-LAST:event_Register3ActionPerformed
 
     private void Register4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Register4ActionPerformed

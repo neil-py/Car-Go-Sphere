@@ -36,7 +36,7 @@ public class Menu extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Car Rental and Management");
+        setTitle("CarGoSphere Main");
         setLocationByPlatform(true);
         setResizable(false);
 

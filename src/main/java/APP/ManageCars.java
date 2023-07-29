@@ -31,7 +31,7 @@ public class ManageCars extends javax.swing.JFrame {
         initComponents();
         update();
     }
-    
+    //general update function
     public void update(){
         selectedCarID =0;
         DefaultTableModel tableModel = (DefaultTableModel)jTable1.getModel();
@@ -69,6 +69,94 @@ public class ManageCars extends javax.swing.JFrame {
             conn.close();
         } catch (SQLException e){
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+    
+    // register car (instantiation of car using concrete factory class)
+    public void register(){
+        if(selectedCarID!=0){
+            JOptionPane.showMessageDialog(this, "ERROR: Car Exists In The Database!");
+        } else{
+            try{
+                String make = makeVar.getText();
+                String model = modelVar.getText();
+                String type = typeVar.getText();
+                int year = Integer.parseInt(yearVar.getText());
+                String plateNo = plateVar.getText();
+                String fuelType = fuelVar.getText();
+                double ratePerDay = Double.parseDouble(rateVar.getText());
+                String status = String.valueOf(statusVar.getSelectedItem());
+                if("".equals(make)||"".equals(model)||"".equals(type)||"".equals(yearVar.getText())||"".equals(plateNo)||"".equals(fuelType)||"".equals(rateVar.getText())||"".equals(status)){
+                    JOptionPane.showMessageDialog(this, "ERROR: Insufficient Information!");
+                } else{
+                    //facade pattern implementation
+                    IFacade create = new Facade(new Car(make, model, type, plateNo, year, fuelType, ratePerDay, status));
+                    create.registerCar();
+                    update();
+                }
+
+            } catch (HeadlessException | NumberFormatException e){
+                JOptionPane.showMessageDialog(this, "ERROR: Please Check Your Entries and Try Again!");
+            }
+        }
+    }
+    // upadate selected car
+    public void updateCar(){
+        if(selectedCarID ==0){
+            JOptionPane.showMessageDialog(this, "ERROR: No Selected Row!");
+        } else {
+            
+            String query = "UPDATE CARS SET make=?, model=?, type=?, plateNo=?, year=?, fuelType=?, ratePerDay=?, status=? WHERE carID=?;";
+            String make = makeVar.getText();
+            String model = modelVar.getText();
+            String type = typeVar.getText();
+            int year = Integer.parseInt(yearVar.getText());
+            String plateNo = plateVar.getText();
+            String fuelType = fuelVar.getText();
+            double ratePerDay = Double.parseDouble(rateVar.getText());
+            String status = String.valueOf(statusVar.getSelectedItem());
+            try{
+                DatabaseConnection connect = DatabaseConnection.getInstance();
+                Connection conn = connect.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                pstmt.setString(1, make);
+                pstmt.setString(2, model);
+                pstmt.setString(3, type);
+                pstmt.setString(4, plateNo);
+                pstmt.setInt(5, year);
+                pstmt.setString(6, fuelType);
+                pstmt.setDouble(7, ratePerDay);
+                pstmt.setString(8, status);
+                pstmt.setInt(9, selectedCarID);
+                pstmt.executeUpdate();
+                conn.close();
+                update();
+            } catch (SQLException e){
+                System.out.println("ERROR: " + e.getMessage());
+            }
+        }
+    }
+    
+    //delete selected car from the database
+    public void delete(){
+        if(selectedCarID==0){
+            JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
+        } else {
+            int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
+            if(input==0){
+                String query = "DELETE FROM CARS WHERE carID =" + selectedCarID +";";
+                try{
+                    DatabaseConnection connect = DatabaseConnection.getInstance();
+                    Connection conn = connect.getConnection();
+                    Statement stmt = conn.createStatement();
+                    stmt.executeUpdate(query);
+                    conn.close();
+                    update();
+                } catch (SQLException e){
+                    JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
+                }
+            
+            }
         }
     }
     
@@ -350,93 +438,17 @@ public class ManageCars extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if(selectedCarID!=0){
-            JOptionPane.showMessageDialog(this, "ERROR: Car Exists In The Database!");
-        } else{
-            try{
-                String make = makeVar.getText();
-                String model = modelVar.getText();
-                String type = typeVar.getText();
-                int year = Integer.parseInt(yearVar.getText());
-                String plateNo = plateVar.getText();
-                String fuelType = fuelVar.getText();
-                double ratePerDay = Double.parseDouble(rateVar.getText());
-                String status = String.valueOf(statusVar.getSelectedItem());
-                if("".equals(make)||"".equals(model)||"".equals(type)||"".equals(yearVar.getText())||"".equals(plateNo)||"".equals(fuelType)||"".equals(rateVar.getText())||"".equals(status)){
-                    JOptionPane.showMessageDialog(this, "ERROR: Insufficient Information!");
-                } else{
-                    //facade pattern implementation
-                    IFacade create = new Facade(new Car(make, model, type, plateNo, year, fuelType, ratePerDay, status));
-                    create.registerCar();
-                    update();
-                }
-
-            } catch (HeadlessException | NumberFormatException e){
-                JOptionPane.showMessageDialog(this, "ERROR: Please Check Your Entries and Try Again!");
-            }
-        }
-        
-        
+        register();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if(selectedCarID ==0){
-            JOptionPane.showMessageDialog(this, "ERROR: No Selected Row!");
-        } else {
-            
-            String query = "UPDATE CARS SET make=?, model=?, type=?, plateNo=?, year=?, fuelType=?, ratePerDay=?, status=? WHERE carID=?;";
-            String make = makeVar.getText();
-            String model = modelVar.getText();
-            String type = typeVar.getText();
-            int year = Integer.parseInt(yearVar.getText());
-            String plateNo = plateVar.getText();
-            String fuelType = fuelVar.getText();
-            double ratePerDay = Double.parseDouble(rateVar.getText());
-            String status = String.valueOf(statusVar.getSelectedItem());
-            try{
-                DatabaseConnection connect = DatabaseConnection.getInstance();
-                Connection conn = connect.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                pstmt.setString(1, make);
-                pstmt.setString(2, model);
-                pstmt.setString(3, type);
-                pstmt.setString(4, plateNo);
-                pstmt.setInt(5, year);
-                pstmt.setString(6, fuelType);
-                pstmt.setDouble(7, ratePerDay);
-                pstmt.setString(8, status);
-                pstmt.setInt(9, selectedCarID);
-                pstmt.executeUpdate();
-                conn.close();
-                update();
-            } catch (SQLException e){
-                System.out.println("ERROR: " + e.getMessage());
-            }
-        }
+        updateCar();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if(selectedCarID==0){
-            JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
-        } else {
-            int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
-            if(input==0){
-                String query = "DELETE FROM CARS WHERE carID =" + selectedCarID +";";
-                try{
-                    DatabaseConnection connect = DatabaseConnection.getInstance();
-                    Connection conn = connect.getConnection();
-                    Statement stmt = conn.createStatement();
-                    stmt.executeUpdate(query);
-                    conn.close();
-                    update();
-                } catch (SQLException e){
-                    JOptionPane.showMessageDialog(this, "ERROR: " + e.getMessage());
-                }
-            
-            }
-        }
+        delete();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -454,6 +466,7 @@ public class ManageCars extends javax.swing.JFrame {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
+        // whenever a record in the table is selected, the specified informations are returned to their respective inputs
         int SelectedRow = jTable1.getSelectedRow();
         selectedCarID = Integer.parseInt(String.valueOf(jTable1.getValueAt(SelectedRow, 0)));
         makeVar.setText(String.valueOf(jTable1.getValueAt(SelectedRow, 1)));

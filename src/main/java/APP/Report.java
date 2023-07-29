@@ -31,6 +31,7 @@ public class Report extends javax.swing.JFrame {
         fetchType();
     }
     
+    // fetch all the distinct makes inside the database
     public void fetchMake(){
         
         try{
@@ -47,6 +48,7 @@ public class Report extends javax.swing.JFrame {
         }
     }
     
+    // fetch all the distinct models inside the database
     public void fetchModel(){
         try{
             connect = DatabaseConnection.getInstance();
@@ -62,6 +64,7 @@ public class Report extends javax.swing.JFrame {
         }
     }
     
+    // fetch all the distinct types inside the database
     public void fetchType(){
         
         try{
