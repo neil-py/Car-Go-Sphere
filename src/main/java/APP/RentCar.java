@@ -37,7 +37,7 @@ public class RentCar extends javax.swing.JFrame {
         update();
     }
     
-    public void update(){ 
+    private void update(){ 
         //setting up jTable1 & jTable2 for retrieveal of data from database
         DefaultTableModel tableModel1 = (DefaultTableModel)jTable1.getModel();
         tableModel1.getDataVector().removeAllElements();
@@ -53,58 +53,42 @@ public class RentCar extends javax.swing.JFrame {
             /*connecting to database and selecting
               CARS and CUSTOMERS table*/
             DatabaseConnection connect = DatabaseConnection.getInstance();
-            Connection conn = connect.getConnection();
-            Statement stmt1 = conn.createStatement();
-            Statement stmt2 = conn.createStatement();
-            Statement stmt3 = conn.createStatement();
-            Statement stmt4 = conn.createStatement();
-            ResultSet rs1 = stmt1.executeQuery("SELECT * FROM CARS WHERE status = 'Available';");
-            ResultSet rs2 = stmt2.executeQuery("SELECT * FROM CUSTOMERS");
-                       
-            
-            
-            
-            /*while there is a line in the query rs1, 
-              retrieve the data to fetch to the jTable2*/
-            while(rs1.next()){
-                String carID = String.valueOf((int)rs1.getInt("carID"));
-                String make = rs1.getString("make");
-                String model = rs1.getString("model");
-                String type = rs1.getString("type");
-                String plateNo = rs1.getString("plateNo");
-                String year = String.valueOf((int)rs1.getInt("year"));
+            try (Connection conn = connect.getConnection()) {
+                Statement stmt1 = conn.createStatement();
+                Statement stmt2 = conn.createStatement();
+                ResultSet rs1 = stmt1.executeQuery("SELECT * FROM CARS WHERE status = 'Available';");
+                ResultSet rs2 = stmt2.executeQuery("SELECT * FROM CUSTOMERS WHERE custID not in (SELECT custID FROM RENTALS WHERE status = 'Currently Rented');");
                 
-                String fuelType = rs1.getString("fuelType");
-                String ratePerDay = String.valueOf((double)rs1.getDouble("ratePerDay"));
-                String rowData1[] = {carID, make, model, type, plateNo, year, fuelType, ratePerDay};
-                tableModel1.addRow(rowData1);
-                
+                /*while there is a line in the query rs1,
+                retrieve the data to fetch to the jTable2*/
+                while(rs1.next()){
+                    String carID = String.valueOf((int)rs1.getInt("carID"));  
+                    carIDBox.addItem(carID);
+                    String make = rs1.getString("make");
+                    String model = rs1.getString("model");
+                    String type = rs1.getString("type");
+                    String plateNo = rs1.getString("plateNo");
+                    String year = String.valueOf((int)rs1.getInt("year"));
+                    
+                    String fuelType = rs1.getString("fuelType");
+                    String ratePerDay = String.valueOf((double)rs1.getDouble("ratePerDay"));
+                    String rowData1[] = {carID, make, model, type, plateNo, year, fuelType, ratePerDay};
+                    tableModel1.addRow(rowData1);
+                }
+                /*while there is a line in the query rs2,
+                retrieve the data to fetch to the jTable2*/
+                while(rs2.next()){
+                    String custID = String.valueOf((int)rs2.getInt("custID"));
+                    custIDBox.addItem(custID);
+                    String fname = rs2.getString("fname");
+                    String lname = rs2.getString("lname");
+                    String address = rs2.getString("address");
+                    String contactNo = rs2.getString("contactNo");
+                    String licenseNo = rs2.getString("licenseNo");
+                    String rowData2[] = {custID, fname, lname, address, contactNo, licenseNo};
+                    tableModel2.addRow(rowData2);
+                }
             }
-            
-            /*while there is a line in the query rs2, 
-              retrieve the data to fetch to the jTable2*/            
-            while(rs2.next()){                
-                String custID = String.valueOf((int)rs2.getInt("custID"));
-                String fname = rs2.getString("fname");
-                String lname = rs2.getString("lname");
-                String address = rs2.getString("address");
-                String contactNo = rs2.getString("contactNo");
-                String licenseNo = rs2.getString("licenseNo");
-                String rowData2[] = {custID, fname, lname, address, contactNo, licenseNo};
-                tableModel2.addRow(rowData2);
-            }
-            ResultSet rs3 = stmt3.executeQuery("SELECT carID from CARS WHERE status = 'Available';"); 
-            while(rs3.next()){
-                
-                carIDBox.addItem(rs3.getString("carID"));
-            }
-            ResultSet rs4 = stmt4.executeQuery("SELECT custID from CUSTOMERS");
-            while(rs4.next()){
-                custIDBox.addItem(rs4.getString("custID"));
-            }
-            
-            
-            conn.close();
         } catch (SQLException e){
             System.out.println("Error: " + e.getMessage());
         }
@@ -140,6 +124,14 @@ public class RentCar extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Create Rental");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(245, 249, 252));
 
@@ -207,12 +199,27 @@ public class RentCar extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane2.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setResizable(false);
+            jTable2.getColumnModel().getColumn(1).setResizable(false);
+            jTable2.getColumnModel().getColumn(2).setResizable(false);
+            jTable2.getColumnModel().getColumn(3).setResizable(false);
+            jTable2.getColumnModel().getColumn(4).setResizable(false);
+            jTable2.getColumnModel().getColumn(5).setResizable(false);
+        }
 
         jTable1.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
         jTable1.setForeground(new java.awt.Color(26, 34, 65));
@@ -230,12 +237,29 @@ public class RentCar extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(4).setResizable(false);
+            jTable1.getColumnModel().getColumn(5).setResizable(false);
+            jTable1.getColumnModel().getColumn(6).setResizable(false);
+            jTable1.getColumnModel().getColumn(7).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -323,6 +347,7 @@ public class RentCar extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void carIDBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carIDBoxActionPerformed
@@ -360,8 +385,30 @@ public class RentCar extends javax.swing.JFrame {
                     pstmt.setString(1, "Rented");
                     pstmt.setInt(2, carID);
                     pstmt.executeUpdate();
+                        
+                    String query2 = "SELECT CUSTOMERS.lname, CUSTOMERS.fname, CUSTOMERS.licenseNo, CARS.make, CARS.model, CARS.plateNO, RENTALS.totalcost, RENTALS.rentalDate, RENTALS.returnDate FROM RENTALS LEFT JOIN CUSTOMERS ON RENTALS.custID = CUSTOMERS.custID LEFT JOIN CARS ON RENTALS.carID = CARS.carID ORDER BY rentID DESC LIMIT 1;";
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery(query2);
+                    if(rs.next()){
+                        String lname = rs.getString("lname");
+                        String fname = rs.getString("fname");
+                        String licenseNo = rs.getString("licenseNo");
+                        String carMake = rs.getString("make");
+                        String carModel = rs.getString("model");
+                        String carPlateNo = rs.getString("plateNo");
+                        String totalCost = String.valueOf(rs.getDouble("totalCost"));
+                        String rentalDate = rs.getString("rentalDate");
+                        String returnDate = rs.getString("returnDate");
+                        String info = "Booking Successful!" + "\n" +
+                                      "-------------------------------------" + "\n" +
+                                      "Name: " + fname + " " + lname + "\n" +
+                                      "License: " + licenseNo + "\n" +
+                                      "Car: " + carMake + " - " + carModel + " - " + carPlateNo + "\n" +
+                                      "Rent Duration: " + rentalDate + " - " + returnDate + "\n" +
+                                      "Total Rent Cost: PHP " + totalCost;
+                        JOptionPane.showMessageDialog(this, info);
+                    }
                     conn.close();
-                    JOptionPane.showMessageDialog(this, "Rental Booked!");
                 } catch (SQLException e) {
                     System.out.println("Error" + e.getMessage());
                 }
@@ -378,6 +425,15 @@ public class RentCar extends javax.swing.JFrame {
         // TODO add your handling code here:
         update();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosing
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        new Menu().setVisible(true);
+    }//GEN-LAST:event_formWindowClosed
 
 
 

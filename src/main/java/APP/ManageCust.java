@@ -181,6 +181,11 @@ public class ManageCust extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Manage Customers");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(245, 249, 252));
 
@@ -192,9 +197,9 @@ public class ManageCust extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(26, 34, 65));
         jLabel2.setText("Last Name:");
 
-        fnameIN.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        fnameIN.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
 
-        lnameIN.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lnameIN.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
         lnameIN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lnameINActionPerformed(evt);
@@ -205,7 +210,7 @@ public class ManageCust extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(26, 34, 65));
         jLabel3.setText("Address:");
 
-        addressIN.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        addressIN.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
         addressIN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addressINActionPerformed(evt);
@@ -220,14 +225,14 @@ public class ManageCust extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(26, 34, 65));
         jLabel5.setText("License Number:");
 
-        contactNoIN.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        contactNoIN.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
         contactNoIN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 contactNoINActionPerformed(evt);
             }
         });
 
-        licenseNoIN.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        licenseNoIN.setFont(new java.awt.Font("Yu Gothic UI", 0, 12)); // NOI18N
 
         Register.setBackground(new java.awt.Color(26, 34, 65));
         Register.setFont(new java.awt.Font("Yu Gothic UI", 1, 12)); // NOI18N
@@ -259,9 +264,8 @@ public class ManageCust extends javax.swing.JFrame {
             }
         });
 
-        Register4.setBackground(new java.awt.Color(119, 163, 238));
         Register4.setFont(new java.awt.Font("Yu Gothic UI", 1, 12)); // NOI18N
-        Register4.setForeground(new java.awt.Color(255, 255, 255));
+        Register4.setForeground(new java.awt.Color(26, 34, 65));
         Register4.setText("Cancel");
         Register4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -301,8 +305,11 @@ public class ManageCust extends javax.swing.JFrame {
             custTable.getColumnModel().getColumn(2).setResizable(false);
             custTable.getColumnModel().getColumn(2).setPreferredWidth(13);
             custTable.getColumnModel().getColumn(3).setResizable(false);
+            custTable.getColumnModel().getColumn(3).setPreferredWidth(80);
             custTable.getColumnModel().getColumn(4).setResizable(false);
+            custTable.getColumnModel().getColumn(4).setPreferredWidth(10);
             custTable.getColumnModel().getColumn(5).setResizable(false);
+            custTable.getColumnModel().getColumn(5).setPreferredWidth(10);
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -384,7 +391,7 @@ public class ManageCust extends javax.swing.JFrame {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -395,10 +402,11 @@ public class ManageCust extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void addressINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressINActionPerformed
@@ -448,6 +456,11 @@ public class ManageCust extends javax.swing.JFrame {
     private void contactNoINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contactNoINActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_contactNoINActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        new Menu().setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
