@@ -4,12 +4,8 @@
  */
 package APP;
 
-import LIB.Car;
-import LIB.Customer;
+
 import LIB.DatabaseConnection;
-import LIB.Facade;
-import LIB.IFacade;
-import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,23 +14,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-/**
- *
- * @author NEO
- */
+
+
 public class ManageRentals extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ManageRentals
-     */
     private int selectedRentID = 0;
     public int mode = 1;
     public ManageRentals() {
@@ -199,7 +185,7 @@ public class ManageRentals extends javax.swing.JFrame {
                 if(thereExistFilter){
                     query+= " AND ";
                 }
-                query += " rentalDate = '" + rentalDate + "'";
+                query += " rentalDate >= '" + rentalDate + "'";
                 thereExistFilter=true;
             }
             
@@ -207,7 +193,7 @@ public class ManageRentals extends javax.swing.JFrame {
                 if(thereExistFilter){
                     query+= " AND ";
                 }
-                query += " returnDate = '" + returnDate + "'";
+                query += " returnDate <= '" + returnDate + "'";
                 thereExistFilter=true;
             }
             

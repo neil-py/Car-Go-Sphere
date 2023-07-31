@@ -4,11 +4,10 @@
  */
 package APP;
 
-import LIB.Car;
+
 import LIB.DatabaseConnection;
 import LIB.Facade;
 import LIB.IFacade;
-import LIB.Customer;
 import LIB.BookRental;
 import java.awt.HeadlessException;
 import java.sql.Connection;
@@ -18,20 +17,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
-import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-/**
- *
- * @author barra
- */
+
 public class RentCar extends javax.swing.JFrame {
 
-    /**
-     * Creates new form RentCar
-     */
     public RentCar() {
         initComponents();
         update();

@@ -8,10 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**
- *
- * @author neil
- */
+
 public class Car implements Backend{
     private String make;
     private String model;

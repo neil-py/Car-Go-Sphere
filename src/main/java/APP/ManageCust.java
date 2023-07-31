@@ -4,7 +4,6 @@
  */
 package APP;
 
-import LIB.Car;
 import LIB.Customer;
 import LIB.DatabaseConnection;
 import LIB.Facade;
@@ -20,15 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 
-/**
- *
- * @author Kevin Katz
- */
 public class ManageCust extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ManageCust
-     */
     private int selectedCustID = 0;
     public ManageCust() {
         initComponents();
@@ -101,7 +93,7 @@ public class ManageCust extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "ERROR: No Record Selected!");
         } else {
             int input = JOptionPane.showConfirmDialog(this, "Confirm Record Deletion.");
-            if(input!=0){
+            if(input==0){
                 String query = "DELETE FROM CUSTOMERS WHERE custID =" + selectedCustID +";";
                 try{
                     DatabaseConnection connect = DatabaseConnection.getInstance();
